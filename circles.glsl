@@ -40,10 +40,46 @@ float drawCircle(vec2 uv, vec2 pos, float radius, float thickness){
     return circle ;
 }
 
+float fluffCircle(vec2 uv, vec2 pos, float radius, float thickness){
+    float dist = distance(uv, pos);
+    float circle = smoothstep(radius, thickness, dist);
+
+    circle = -1. * (circle -1. );
+
+    return circle ;
+}
+
+float reverseFluffCircle(vec2 uv, vec2 pos, float radius, float thickness) {
+    float dist = distance(uv, pos);
+
+    float circle = step(radius, dist);
+    float innerFluff = smoothstep(radius, thickness, dist);
+
+    circle += innerFluff;
+
+    return circle;
+}
+
+float fluffRing(vec2 uv, vec2 pos, float radius, float thickness) {
+    float dist = distance(uv, pos);
+    float circle = smoothstep(radius, radius - thickness, dist);
+    circle = -1. * (circle -1. );
+
+    float innerCircle = smoothstep(radius, radius - thickness - thickness, dist);
+
+    circle += innerCircle;
+
+    //circle = clamp(circle, 0.,1.);
+
+    return circle;
+}
+
 void main(){
 	vec2 st = gl_FragCoord.xy/u_resolution;
     st.y *= 1.25;
     float pct = drawCircle(st, vec2( .3, .5 ), .5, .06);
+
+    pct = fluffRing(st, vec2( .3, .5 ), .5, .04);
 
     vec3 color = vec3(pct);
 
