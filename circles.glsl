@@ -13,17 +13,17 @@ uniform float u_time;
 
 Try the following exercises:
 
-    Use step() to turn everything above 0.5 to white and everything below to 0.0.
+    Use step() to turn everything above 0.5 to white and everything below to 0.0. OK
 
-    Inverse the colors of the background and foreground.
+    Inverse the colors of the background and foreground. OK
 
-    Using smoothstep(), experiment with different values to get nice smooth borders on your circle.
+    Using smoothstep(), experiment with different values to get nice smooth borders on your circle. OK
 
-    Once you are happy with an implementation, make a function of it that you can reuse in the future.
+    Once you are happy with an implementation, make a function of it that you can reuse in the future. OK
 
-    Add color to the circle.
+    Add color to the circle. OK
 
-    Can you animate your circle to grow and shrink, simulating a beating heart? (You can get some inspiration from the animation in the previous chapter.)
+    Can you animate your circle to grow and shrink, simulating a beating heart? (You can get some inspiration from the animation in the previous chapter.) OK
 
     What about moving this circle? Can you move it and place different circles in a single billboard?
     What happens if you combine distances fields together using different functions and operations?
@@ -74,14 +74,34 @@ float fluffRing(vec2 uv, vec2 pos, float radius, float thickness) {
     return circle;
 }
 
+float beatingFluff(vec2 uv, vec2 pos, float radius, float thickness, float frequency) {
+    float dist = distance(uv, pos);
+    float beat = abs(sin(u_time*frequency));
+
+    float circle = step(radius * beat, dist);
+    float innerFluff = smoothstep(radius * beat, thickness * abs(sin(u_time)), dist);
+
+    circle += innerFluff;
+
+    return circle;
+}
+
+vec3 colorTint(float pct, vec3 color) {
+    return color += pct;
+}
+
 void main(){
 	vec2 st = gl_FragCoord.xy/u_resolution;
     st.y *= 1.25;
     float pct = drawCircle(st, vec2( .3, .5 ), .5, .06);
 
-    pct = fluffRing(st, vec2( .3, .5 ), .5, .04);
+    pct = beatingFluff(st, vec2( .3, .5 ), .5, .04,.2);
 
-    vec3 color = vec3(pct);
+    float circ = beatingFluff(st, vec2(.8,.2), .6, .8,.5);
+    vec3 col2 = colorTint(circ, vec3(0.,0.,1.));
+
+    vec3 color = colorTint(pct, vec3(1.,0.,0.));
+    color *= col2;
 
 	gl_FragColor = vec4( color, 1.0 );
 }
