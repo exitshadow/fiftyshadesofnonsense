@@ -29,7 +29,7 @@ vec3 drawFlake(float beat1, float beat2, vec3 targetCol, vec2 pos, float speed, 
 
 void main(){
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    st.y *= 1.3;
+    //st.y *= 1.3;
     vec3 color = vec3(0.0);
     float speed = u_time * .3;
 
